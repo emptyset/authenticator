@@ -4,18 +4,15 @@ CREATE TABLE IF NOT EXISTS users (
  password TEXT NOT NULL,
  key TEXT
 );
-
 CREATE TABLE IF NOT EXISTS groups (
  group_id INTEGER PRIMARY KEY,
  name TEXT NOT NULL
 );
-
 CREATE TABLE IF NOT EXISTS actions (
  action_id INTEGER PRIMARY KEY,
  verb TEXT NOT NULL,
  url TEXT NOT NULL
-)
-
+);
 CREATE TABLE IF NOT EXISTS users_groups (
  user_id INTEGER,
  group_id INTEGER,
@@ -25,7 +22,6 @@ CREATE TABLE IF NOT EXISTS users_groups (
  FOREIGN KEY (group_id) REFERENCES groups (group_id)
  ON DELETE CASCADE ON UPDATE NO ACTION
 );
-
 CREATE TABLE IF NOT EXISTS groups_actions (
  group_id INTEGER,
  action_id INTEGER,
@@ -33,7 +29,5 @@ CREATE TABLE IF NOT EXISTS groups_actions (
  FOREIGN KEY (group_id) REFERENCES groups (group_id)
  ON DELETE CASCADE ON UPDATE NO ACTION
  FOREIGN KEY (action_id) REFERENCES actions (action_id)
- ON DELETE CASCADE ON UPDATE NO ACTION,
+ ON DELETE CASCADE ON UPDATE NO ACTION
 );
-
-
