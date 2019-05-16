@@ -3,6 +3,10 @@ app = Flask(__name__)
 
 import sqlite3
 from flask import g
+from flask import request
+from flask import jsonify
+
+import json
 
 # best to do this with environment variables (12-factor app)
 DATABASE = 'data/database.db'
@@ -35,22 +39,45 @@ def query_db(query, args=(), one=False):
 
 @app.route('/login', methods=['POST'])
 def login():
+    username = request.get_json()['username']
+    password = request.get_json()['password']
     # check username/password (grab parameters from body)
+    user = query_db("select username from users where username = '{}' and password = '{}'".format(username, password), one=True)
+    if user is None:
+        return "NO", 401
     # generate the key
+    key = username
     # update record with key
-    return "OK"
+    query_db("update users set key = '{}' where username = '{}'".format(key, username))
+    get_db().commit()
+    return key, 200
 
 @app.route('/logout', methods=['POST'])
 def logout():
+    # supply key in the body of the request
+    key = request.get_json()['key']
+    # check for existence of the key
+    user = query_db("select key from users where key = '{}'".format(key))
+    if user is None:
+        return "NO", 404
     # update record to clear key
-    return "OK"
+    query_db("update users set key = NULL where key = '{}'".format(key))
+    get_db().commit()
+    return "SURE", 200
 
 @app.route('/actions', methods=['GET'])
 def actions():
+    key = request.args['key']
     # query the actions table via user/group/actions join
-    # iterate through actions, and convert to JSON record
+    query = "select verb, url " \
+            "from actions a join groups_actions ga on a.action_id = ga.action_id " \
+            "join users_groups ug on ga.group_id = ug.group_id " \
+            "join users u on u.user_id = ug.user_id " \
+            "where u.key = '{}'".format(key)
+    actions = query_db(query)
+    # MAYBE: iterate through actions, and convert to JSON record
     # return all actions as json
-    return "OK"
+    return json.dumps(actions), 200
 
 if __name__ == '__main__':
     app.run()

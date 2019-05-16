@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS users (
  user_id INTEGER PRIMARY KEY,
- username TEXT NOT NULL,
+ username TEXT NOT NULL UNIQUE,
  password TEXT NOT NULL,
- key TEXT
+ key TEXT UNIQUE
 );
 CREATE TABLE IF NOT EXISTS groups (
  group_id INTEGER PRIMARY KEY,
@@ -31,3 +31,19 @@ CREATE TABLE IF NOT EXISTS groups_actions (
  FOREIGN KEY (action_id) REFERENCES actions (action_id)
  ON DELETE CASCADE ON UPDATE NO ACTION
 );
+
+INSERT into users(username, password) values('alan', 'temp');
+INSERT into users(username, password) values('gabe', 'temp');
+INSERT into groups(name) values('engineers');
+INSERT into groups(name) values('managers');
+INSERT into actions(verb, url) values('GET', '/apple');
+INSERT into actions(verb, url) values('POST', '/banana');
+INSERT into actions(verb, url) values('GET', '/kiwi');
+INSERT into actions(verb, url) values('POST', '/orange');
+INSERT into users_groups(user_id, group_id) values(1, 1);
+INSERT into users_groups(user_id, group_id) values(2, 2);
+INSERT into groups_actions(group_id, action_id) values(1, 1);
+INSERT into groups_actions(group_id, action_id) values(1, 2);
+INSERT into groups_actions(group_id, action_id) values(2, 3);
+INSERT into groups_actions(group_id, action_id) values(2, 4);
+
