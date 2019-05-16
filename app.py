@@ -6,9 +6,10 @@ from flask import g
 from flask import request
 from flask import jsonify
 
+import bcrypt
 import json
 
-# best to do this with environment variables (12-factor app)
+# TODO: best to do this with environment variables (12-factor app)
 DATABASE = 'data/database.db'
 
 def init_db():
@@ -30,7 +31,7 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
-# could use sql alchemy instead
+# TODO: could use sql alchemy instead
 def query_db(query, args=(), one=False):
     cur = get_db().execute(query, args)
     rv = cur.fetchall()
@@ -39,14 +40,18 @@ def query_db(query, args=(), one=False):
 
 @app.route('/login', methods=['POST'])
 def login():
+    # TODO: sanitize the input
     username = request.get_json()['username']
     password = request.get_json()['password']
     # check username/password (grab parameters from body)
-    user = query_db("select username from users where username = '{}' and password = '{}'".format(username, password), one=True)
+    user = query_db("select username, password from users where username = '{}'".format(username), one=True)
     if user is None:
         return "NO", 401
-    # generate the key
+    if not bcrypt.checkpw(password.encode(), user[1].encode()):
+        return "NO", 401
+    # TODO: generate the key with uuid.uuid4()
     key = username
+    # TODO: handle errors and do not set key when errors present
     # update record with key
     query_db("update users set key = '{}' where username = '{}'".format(key, username))
     get_db().commit()
@@ -67,6 +72,7 @@ def logout():
 
 @app.route('/actions', methods=['GET'])
 def actions():
+    # TODO: do unit tests throughout
     key = request.args['key']
     # query the actions table via user/group/actions join
     query = "select verb, url " \

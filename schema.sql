@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS groups_actions (
  ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
-INSERT into users(username, password) values('alan', 'temp');
-INSERT into users(username, password) values('gabe', 'temp');
+INSERT into users(username, password) values('alan', '$2b$12$4URLa5vJ1XP9Ot9m7a7ZKevIaoTVRj5pLrc9UqS/MTWoNy/aXYPra');
+INSERT into users(username, password) values('gabe', '$2b$12$2grDj6Ek88AKUQbPxpe8ke.7YyzsivQ1g1TPrdTAKrfbd3YGt0P3q');
 INSERT into groups(name) values('engineers');
 INSERT into groups(name) values('managers');
 INSERT into actions(verb, url) values('GET', '/apple');
