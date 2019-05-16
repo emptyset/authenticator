@@ -7,6 +7,13 @@ from flask import g
 # best to do this with environment variables (12-factor app)
 DATABASE = 'data/database.db'
 
+def init_db():
+    with app.app_context():
+        db = get_db()
+        with app.open_resource('schema.sql', mode='r') as f:
+            db.cursor().executescript(f.read())
+        db.commit()
+
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
